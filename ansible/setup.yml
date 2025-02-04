@@ -1,0 +1,30 @@
+- name: Setup Finance Tracker
+  hosts: finance_tracker
+  become: yes
+  tasks:
+    - name: Update packages
+      apt:
+        update_cache: yes
+
+    - name: Install Node.js and Git
+      apt:
+        name:
+          - nodejs
+          - npm
+          - git
+        state: present
+
+    - name: Clone the finance tracker app
+      git:
+        repo: https://github.com/Ngozi-N/ExpFinanceTracker.git
+        dest: /home/ubuntu/FinanceTracker
+
+    - name: Install dependencies
+      command: npm install
+      args:
+        chdir: /home/ubuntu/FinanceTracker
+
+    - name: Start the app using PM2
+      command: npx pm2 start server.js
+      args:
+        chdir: /home/ubuntu/FinanceTracker

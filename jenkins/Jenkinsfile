@@ -1,0 +1,15 @@
+pipeline {
+    agent any
+    stages {
+        stage('Pull Code') {
+            steps {
+                git 'https://github.com/Ngozi-N/ExpFinanceTracker.git'
+            }
+        }
+        stage('Deploy with Ansible') {
+            steps {
+                sh 'ansible-playbook -i ansible/inventory.ini ansible/setup.yml'
+            }
+        }
+    }
+}

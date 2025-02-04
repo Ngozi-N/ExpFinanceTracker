@@ -1,0 +1,38 @@
+[
+    {
+      "id": 1,
+      "date": "2025-02-01",
+      "description": "Grocery Shopping",
+      "amount": -50.75,
+      "category": "Food"
+    },
+    {
+      "id": 2,
+      "date": "2025-02-02",
+      "description": "Salary",
+      "amount": 2000.00,
+      "category": "Income"
+    },
+    {
+      "id": 3,
+      "date": "2025-02-03",
+      "description": "Electricity Bill",
+      "amount": -75.30,
+      "category": "Utilities"
+    },
+    {
+      "id": 4,
+      "date": "2025-02-04",
+      "description": "Gym Membership",
+      "amount": -25.00,
+      "category": "Health"
+    },
+    {
+      "id": 5,
+      "date": "2025-02-05",
+      "description": "Freelance Work",
+      "amount": 500.00,
+      "category": "Income"
+    }
+  ]
+  
