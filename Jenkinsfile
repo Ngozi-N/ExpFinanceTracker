@@ -30,16 +30,29 @@ pipeline {
                 script {
                     EC2_IP = sh(script: "cd terraform && terraform output -raw instance_public_ip", returnStdout: true).trim()
                     echo "EC2 Public IP: ${EC2_IP}"
-
-                    // Fix: Correct syntax for writing inventory.ini
                     writeFile file: 'ansible/inventory.ini', text: "[finance_tracker]\n${EC2_IP} ansible_ssh_user=ubuntu ansible_ssh_private_key_file=~/.ssh/mytest_keypair.pem"
+                }
+            }
+        }
+
+        stage('Wait for EC2 SSH to Become Available') {
+            steps {
+                script {
+                    echo "Waiting for SSH to be available on ${EC2_IP}..."
+                    sh """
+                    for i in {1..10}; do
+                        nc -z -v ${EC2_IP} 22 && echo 'SSH is up!' && exit 0
+                        echo 'Waiting for SSH...'
+                        sleep 10
+                    done
+                    echo 'SSH did not start in time' && exit 1
+                    """
                 }
             }
         }
 
         stage('Run Ansible Playbook') {
             steps {
-                // ✅ Fix: Add the missing closing quote
                 sh 'ansible-playbook -i ansible/inventory.ini ansible/setup.yml'
             }
         }
