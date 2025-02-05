@@ -18,6 +18,7 @@
       git:
         repo: https://github.com/Ngozi-N/ExpFinanceTracker.git
         dest: /home/ubuntu/ExpFinanceTracker
+        force: yes
 
     - name: Install dependencies
       command: npm install
