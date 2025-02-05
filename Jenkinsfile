@@ -14,10 +14,12 @@ pipeline {
 
         stage('Terraform Init & Apply') {
             steps {
-                script {
-                    dir('terraform') {
-                        sh 'terraform init'
-                        sh 'terraform apply -auto-approve'
+                withCredentials([aws(credentialsId: 'YOUR_CREDENTIALS_ID', region: 'eu-west-2')]) {
+                    script {
+                        dir('terraform') {
+                            sh 'terraform init'
+                            sh 'terraform apply -auto-approve'
+                        }
                     }
                 }
             }
@@ -35,16 +37,4 @@ pipeline {
 
         stage('Run Ansible Playbook') {
             steps {
-                sh 'ansible-playbook -i ansible/inventory.ini ansible/setup.yml'
-            }
-        }
-
-        stage('Show Access URL') {
-            steps {
-                script {
-                    echo "✅ Access the Finance Tracker App at: http://${EC2_IP}:3000"
-                }
-            }
-        }
-    }
-}
+                sh 'ansible-playbook -i ansible/inventory.ini ansible/setup
