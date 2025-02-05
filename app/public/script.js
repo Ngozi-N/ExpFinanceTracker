@@ -10,7 +10,7 @@ function loadTransactions() {
             list.innerHTML = ""; // Clear previous content
             transactions.forEach(transaction => {
                 const item = document.createElement("li");
-                item.textContent = `${transaction.date}: ${transaction.description} - $${transaction.amount} (${transaction.category})`;
+                item.innerHTML = `<strong>${transaction.date}:</strong> ${transaction.description} - <span style="color:${transaction.amount < 0 ? 'red' : 'green'};">$${transaction.amount}</span>`;
                 list.appendChild(item);
             });
         })
