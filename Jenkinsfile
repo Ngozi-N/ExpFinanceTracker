@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Ngozi-N/ExpFinanceTracker.git'
+                git branch: 'main', url: 'https://github.com/Ngozi-N/ExpFinanceTracker.git'
             }
         }
 
@@ -26,11 +26,8 @@ pipeline {
         stage('Extract EC2 Public IP & Update Inventory') {
             steps {
                 script {
-                    // Get the EC2 public IP from Terraform output
                     EC2_IP = sh(script: "cd terraform && terraform output -raw instance_public_ip", returnStdout: true).trim()
                     echo "EC2 Public IP: ${EC2_IP}"
-
-                    // Dynamically update the Ansible inventory file
                     writeFile file: 'ansible/inventory.ini', text: "[finance_tracker]\n${EC2_IP} ansible_ssh_user=ubuntu ansible_ssh_private_key_file=~/.ssh/mytest_keypair.pem"
                 }
             }
