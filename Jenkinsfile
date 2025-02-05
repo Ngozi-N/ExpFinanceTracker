@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         AWS_REGION = "eu-west-2"
+        SSH_KEY = "/var/lib/jenkins/.ssh/mytest_keypair.pem"  // Path to SSH key on Jenkins server
+        SSH_USER = "ubuntu"
     }
 
     stages {
@@ -25,40 +27,34 @@ pipeline {
             }
         }
 
-        stage('Extract EC2 Public IP & Update Inventory') {
+        stage('Extract EC2 Public IP') {
             steps {
                 script {
                     EC2_IP = sh(script: "cd terraform && terraform output -raw instance_public_ip", returnStdout: true).trim()
                     echo "EC2 Public IP: ${EC2_IP}"
-
-                    // ✅ Fix: Add StrictHostKeyChecking=no to avoid SSH manual confirmation
-                    writeFile file: 'ansible/inventory.ini', text: """
-                    [finance_tracker]
-                    ${EC2_IP} ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/var/lib/jenkins/.ssh/mytest_keypair.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-                    """
                 }
             }
         }
 
-        stage('Wait for EC2 SSH to Become Available') {
+        stage('Copy Ansible Playbook to EC2') {
             steps {
                 script {
-                    echo "Waiting for SSH to be available on ${EC2_IP}..."
+                    echo "Copying Ansible playbook to EC2..."
                     sh """
-                    for i in {1..30}; do  # Increased retries from 10 to 20
-                        nc -z -v ${EC2_IP} 22 && echo 'SSH is up!' && exit 0
-                        echo 'Waiting for SSH...'
-                        sleep 20  # Increased wait time
-                    done
-                    echo 'SSH did not start in time' && exit 1
+                    scp -o StrictHostKeyChecking=no -i ${SSH_KEY} ansible/setup.yml ${SSH_USER}@${EC2_IP}:/home/ubuntu/
                     """
                 }
             }
         }
 
-        stage('Run Ansible Playbook') {
+        stage('Run Ansible Locally on EC2') {
             steps {
-                sh 'ansible-playbook -i ansible/inventory.ini ansible/setup.yml'
+                script {
+                    echo "Executing Ansible on EC2..."
+                    sh """
+                    ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${SSH_USER}@${EC2_IP} 'sudo apt update && sudo apt install -y ansible && ansible-playbook -i "localhost," -c local /home/ubuntu/setup.yml'
+                    """
+                }
             }
         }
 
