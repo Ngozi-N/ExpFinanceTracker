@@ -1,43 +1,34 @@
-const express = require("express");
-const fs = require("fs");
-const app = express();
+- name: Setup Finance Tracker
+  hosts: finance_tracker
+  become: yes
+  tasks:
+    - name: Update packages
+      apt:
+        update_cache: yes
 
-app.use(express.static("public"));
-app.use(express.json());
+    - name: Install Node.js, npm, and Git
+      apt:
+        name:
+          - nodejs
+          - npm
+          - git
+        state: present
 
-// Get all transactions
-app.get("/transactions", (req, res) => {
-    fs.readFile("./data/transactions.json", "utf8", (err, data) => {
-        if (err) {
-            res.status(500).json({ message: "Error reading transactions" });
-        } else {
-            res.json(JSON.parse(data));
-        }
-    });
-});
+    - name: Install PM2 globally
+      command: npm install -g pm2
 
-// Add a new transaction
-app.post("/transactions", (req, res) => {
-    fs.readFile("./data/transactions.json", "utf8", (err, data) => {
-        if (err) {
-            res.status(500).json({ message: "Error reading transactions" });
-        } else {
-            let transactions = JSON.parse(data);
-            const newTransaction = req.body;
-            newTransaction.id = transactions.length + 1;
-            transactions.push(newTransaction);
+    - name: Clone the finance tracker app
+      git:
+        repo: https://github.com/Ngozi-N/ExpFinanceTracker.git
+        dest: /home/ubuntu/ExpFinanceTracker
+        force: yes
 
-            fs.writeFile("./data/transactions.json", JSON.stringify(transactions, null, 2), (err) => {
-                if (err) {
-                    res.status(500).json({ message: "Error saving transaction" });
-                } else {
-                    res.status(201).json(newTransaction);
-                }
-            });
-        }
-    });
-});
+    - name: Install dependencies
+      command: npm install
+      args:
+        chdir: /home/ubuntu/ExpFinanceTracker
 
-app.listen(3000, () => {
-    console.log("Finance Tracker running on port 3000");
-});
+    - name: Start the app using PM2
+      command: pm2 start server.js --no-daemon
+      args:
+        chdir: /home/ubuntu/ExpFinanceTracker
