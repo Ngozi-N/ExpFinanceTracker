@@ -1,20 +1,72 @@
+/* General Styles */
 body {
-    background: purple;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
     color: white;
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Main Container */
+.container {
+    width: 90%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Title */
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Add Transaction Button */
+.add-transaction button {
+    background: #ff8c00;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.add-transaction button:hover {
+    background: #e07b00;
+}
+
+/* Transactions List */
+.transactions {
+    margin-top: 20px;
+}
+
+.transactions h2 {
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 ul {
     list-style: none;
     padding: 0;
+    margin-top: 10px;
 }
 
 li {
     background: white;
-    color: purple;
+    color: #6a11cb;
     margin: 5px;
     padding: 10px;
     border-radius: 5px;
-    display: inline-block;
+    font-weight: bold;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
 }
