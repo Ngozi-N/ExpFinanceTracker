@@ -23,7 +23,7 @@
     - name: Install dependencies
       command: npm install
       args:
-        chdir: /home/ubuntu/ExpFinanceTracker
+        chdir: /home/ubuntu/ExpFinanceTracker/app
 
     - name: Start the app using PM2
       command: npx pm2 start server.js
