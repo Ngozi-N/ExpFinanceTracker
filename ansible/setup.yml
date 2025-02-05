@@ -17,14 +17,14 @@
     - name: Clone the finance tracker app
       git:
         repo: https://github.com/Ngozi-N/ExpFinanceTracker.git
-        dest: /home/ubuntu/FinanceTracker
+        dest: /home/ubuntu/ExpFinanceTracker
 
     - name: Install dependencies
       command: npm install
       args:
-        chdir: /home/ubuntu/FinanceTracker
+        chdir: /home/ubuntu/ExpFinanceTracker
 
     - name: Start the app using PM2
       command: npx pm2 start server.js
       args:
-        chdir: /home/ubuntu/FinanceTracker
+        chdir: /home/ubuntu/ExpFinanceTracker
