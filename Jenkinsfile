@@ -30,7 +30,12 @@ pipeline {
                 script {
                     EC2_IP = sh(script: "cd terraform && terraform output -raw instance_public_ip", returnStdout: true).trim()
                     echo "EC2 Public IP: ${EC2_IP}"
-                    writeFile file: 'ansible/inventory.ini', text: "[finance_tracker]\n${EC2_IP} ansible_ssh_user=ubuntu ansible_ssh_private_key_file=~/.ssh/mytest_keypair.pem"
+
+                    // ✅ Fix: Add StrictHostKeyChecking=no to avoid SSH manual confirmation
+                    writeFile file: 'ansible/inventory.ini', text: """
+                    [finance_tracker]
+                    ${EC2_IP} ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/var/lib/jenkins/.ssh/mytest_keypair.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+                    """
                 }
             }
         }
