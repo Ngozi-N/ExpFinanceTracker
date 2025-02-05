@@ -48,7 +48,7 @@ pipeline {
                     for i in {1..20}; do  # Increased retries from 10 to 20
                         nc -z -v ${EC2_IP} 22 && echo 'SSH is up!' && exit 0
                         echo 'Waiting for SSH...'
-                        sleep 15  # Increased wait time from 10 to 15 seconds
+                        sleep 60  # Increased wait time
                     done
                     echo 'SSH did not start in time' && exit 1
                     """
